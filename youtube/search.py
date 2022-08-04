@@ -28,18 +28,31 @@ class Youtube(webdriver.Chrome):
 
 
     def search_vid(self, vid_title):
+
         self.get(const.BASE_URL.format(str(vid_title)))
-
-
-    def play_vid(self):
         wait = WebDriverWait(self, 3)
         presence = EC.presence_of_element_located
         visible = EC.visibility_of_element_located
         wait.until(visible((By.ID, "video-title")))
+        results_cont = self.find_element(By.ID, "contents")
+        results_elements = results_cont.find_elements(By.CSS_SELECTOR, "*")
+        for video in results_elements:
+            if str(video.get_attribute('id')).strip() == 'video-title':
+                jeff = str(video.get_attribute('title'))
+                print(jeff)
+
+
+
+    def play_vid(self):
+
         self.find_element(By.ID, "video-title").click()
 
     def getstats(self):
-        views = self.find_element(By.CLASS_NAME, "view-count").get_attribute('innerHTML')
+        try:
+            views = self.find_element(By.CLASS_NAME, "view-count").get_attribute('innerHTML')
+        except:
+            print("The video that came up was probably a youtube short")
+
         views_num = views[0:len(views)-6]
         return views_num
         self.quit()

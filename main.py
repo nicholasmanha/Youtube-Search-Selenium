@@ -8,6 +8,7 @@ try:
         bot.search_vid(vid_title=input("2nd vid? "))
         bot.play_vid()
         print(bot.getstats())
+
 except Exception as e:
     if 'in PATH' in str(e):
         print(
