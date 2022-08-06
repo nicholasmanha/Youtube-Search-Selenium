@@ -36,16 +36,25 @@ class Youtube(webdriver.Chrome):
         wait.until(visible((By.ID, "video-title")))
         results_cont = self.find_element(By.ID, "contents")
         results_elements = results_cont.find_elements(By.CSS_SELECTOR, "*")
+        num = 1
+        total = 1
+        list = []
+
         for video in results_elements:
             if str(video.get_attribute('id')).strip() == 'video-title':
-                jeff = str(video.get_attribute('title'))
-                print(jeff)
+                if num > 5:
+                    break
+                else:
+                    jeff = str(video.get_attribute('title'))
+                    list.append(num)
+                    list.append(jeff)
+                    print(str(num) + ") " + jeff)
+                    num+=1
+        #print(list)
+        result = int(input("Which result do you want? \n"))
+        vid_title = list[list.index(result)+1]
+        self.find_element(By.XPATH, "//h3[a/@title='" + vid_title + "']").click()
 
-
-
-    def play_vid(self):
-
-        self.find_element(By.ID, "video-title").click()
 
     def getstats(self):
         try:
