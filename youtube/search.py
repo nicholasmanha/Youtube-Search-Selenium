@@ -39,21 +39,28 @@ class Youtube(webdriver.Chrome):
         num = 1
         total = 1
         list = []
+        result = 0
+        while result == 0:
+            for video in results_elements:
+                if str(video.get_attribute('id')).strip() == 'video-title':
+                    if num > 5:
+                        result = int(input("Which result do you want? \n"))
+                        if result == 0:
+                            num = 1
+                        else:
+                            break
+                    else:
+                        jeff = str(video.get_attribute('title'))
+                        list.append(total)
+                        list.append(jeff)
+                        print(str(total) + ") " + jeff)
+                        num+=1
+                        total+=1
 
-        for video in results_elements:
-            if str(video.get_attribute('id')).strip() == 'video-title':
-                if num > 5:
-                    break
-                else:
-                    jeff = str(video.get_attribute('title'))
-                    list.append(num)
-                    list.append(jeff)
-                    print(str(num) + ") " + jeff)
-                    num+=1
         #print(list)
-        result = int(input("Which result do you want? \n"))
+
         vid_title = list[list.index(result)+1]
-        self.find_element(By.XPATH, "//h3[a/@title='" + vid_title + "']").click()
+        self.find_element(By.XPATH, "//h3[a/@title='{}']".format(vid_title)).click()
 
 
     def getstats(self):
