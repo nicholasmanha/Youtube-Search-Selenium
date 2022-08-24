@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 class Youtube(webdriver.Chrome):
     def __init__(self, driver_path=r"C:\SeleniumDrivers",
                  teardown=False):
@@ -60,10 +61,12 @@ class Youtube(webdriver.Chrome):
         #print(list)
 
         vid_title = list[list.index(result)+1]
-        self.find_element(By.XPATH, "//h3[a/@title='{}']".format(vid_title)).click()
+        #self.find_element(By.XPATH, "//h3[a/@title='{}']".format(vid_title)).click()
+        self.find_element(By.XPATH, "//h3[a/@title=\"" + vid_title + "\"]").click()
 
 
-    def getstats(self):
+
+    def getviews(self):
         try:
             views = self.find_element(By.CLASS_NAME, "view-count").get_attribute('innerHTML')
         except:
@@ -72,3 +75,4 @@ class Youtube(webdriver.Chrome):
         views_num = views[0:len(views)-6]
         return views_num
         self.quit()
+

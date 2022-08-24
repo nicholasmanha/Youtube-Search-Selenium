@@ -3,11 +3,9 @@ from youtube.search import Youtube
 try:
     with Youtube() as bot:
         bot.search_vid(vid_title=input("1st vid? "))
-        #bot.play_vid()
-        print(bot.getstats())
-        bot.search_vid(vid_title=input("2nd vid? "))
-        bot.play_vid()
-        print(bot.getstats())
+
+        print("This video has " + bot.getviews() + " views.")
+
 
 except Exception as e:
     if 'in PATH' in str(e):
