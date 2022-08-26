@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import re
+from prettytable import PrettyTable
 
 
 class Youtube(webdriver.Chrome):
@@ -13,7 +15,6 @@ class Youtube(webdriver.Chrome):
         self.driver_path = driver_path
         self.teardown = teardown
         os.environ['PATH'] += self.driver_path
-
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--mute-audio")
@@ -28,7 +29,7 @@ class Youtube(webdriver.Chrome):
             self.quit()
 
 
-    def search_vid(self, vid_title):
+    def search_vid(self, vid_title, list_length):
 
         self.get(const.BASE_URL.format(str(vid_title)))
         wait = WebDriverWait(self, 3)
@@ -37,42 +38,26 @@ class Youtube(webdriver.Chrome):
         wait.until(visible((By.ID, "video-title")))
         results_cont = self.find_element(By.ID, "contents")
         results_elements = results_cont.find_elements(By.CSS_SELECTOR, "*")
-        num = 1
-        total = 1
-        list = []
-        result = 0
-        while result == 0:
+        num = 0 #limiting search results
+        myTable = PrettyTable(['Title', 'Author', 'Date', 'Views'])
+        while True:
             for video in results_elements:
+                #checking if current element is a video
                 if str(video.get_attribute('id')).strip() == 'video-title':
-                    if num > 5:
-                        result = int(input("Which result do you want? \n"))
-                        if result == 0:
-                            num = 1
-                        else:
-                            break
-                    else:
-                        jeff = str(video.get_attribute('title'))
-                        list.append(total)
-                        list.append(jeff)
-                        print(str(total) + ") " + jeff)
-                        num+=1
-                        total+=1
-
-        #print(list)
-
-        vid_title = list[list.index(result)+1]
-        #self.find_element(By.XPATH, "//h3[a/@title='{}']".format(vid_title)).click()
-        self.find_element(By.XPATH, "//h3[a/@title=\"" + vid_title + "\"]").click()
-
-
-
-    def getviews(self):
-        try:
-            views = self.find_element(By.CLASS_NAME, "view-count").get_attribute('innerHTML')
-        except:
-            print("The video that came up was probably a youtube short")
-
-        views_num = views[0:len(views)-6]
-        return views_num
+                    title = str(video.get_attribute('title'))
+                    label = str(video.get_attribute('aria-label'))
+                    #label with everything but the title
+                    no_title = label.replace(title, '')
+                    author = no_title[4:re.search(r"\d", no_title).start()-1]
+                    date = no_title[re.search(r"\d", label.replace(title, '')).start():no_title.index("ago")-1]
+                    words = no_title.split()
+                    views = words[-2]
+                    myTable.add_row([title, author, date + " ago", views])
+                    num += 1
+                if num >= list_length:
+                    break
+            break
+        print(myTable)
         self.quit()
+
 

@@ -2,9 +2,9 @@ from youtube.search import Youtube
 
 try:
     with Youtube() as bot:
-        bot.search_vid(vid_title=input("1st vid? "))
+        bot.search_vid(vid_title=input("What would you like to search for? "), list_length=int(input("How many results do you want? ")))
 
-        print("This video has " + bot.getviews() + " views.")
+        #print("This video has " + bot.getviews() + " views.")
 
 
 except Exception as e:
